@@ -17,9 +17,12 @@ st.title("🎓 RFID Student Tracking Dashboard")
 refresh_rate = st.sidebar.slider("Refresh rate (seconds)", 5, 60, 10)
 st.sidebar.info("Data auto-refreshes every few seconds.")
 
+# --- Timezone setup ---
+ist = pytz.timezone("Asia/Kolkata")
+utc = pytz.utc
+
 # --- Placeholder for live updates ---
 placeholder = st.empty()
-ist = pytz.timezone("Asia/Kolkata")
 
 while True:
     with placeholder.container():
@@ -30,14 +33,26 @@ while True:
             st.warning("No student data available yet.")
         else:
             df = pd.DataFrame(data)
+
+            # Handle time conversion safely
             if "last_seen" in df.columns:
                 df["last_seen"] = pd.to_datetime(df["last_seen"], errors="coerce")
+
+                # First localize to UTC (if no timezone info)
+                df["last_seen"] = df["last_seen"].dt.tz_localize("UTC", nonexistent="NaT", ambiguous="NaT")
+                # Then convert to IST
                 df["last_seen"] = df["last_seen"].dt.tz_convert(ist)
+
+                # Format readable IST string
                 df["last_seen_str"] = df["last_seen"].dt.strftime("%Y-%m-%d %H:%M:%S %Z")
 
             st.subheader("📋 Student Log (Latest First)")
-            st.dataframe(df.sort_values("last_seen", ascending=False)[["id", "name", "rfid", "location", "last_seen_str"]],
-                         use_container_width=True)
+            st.dataframe(
+                df.sort_values("last_seen", ascending=False)[
+                    ["id", "name", "rfid", "location", "last_seen_str"]
+                ],
+                use_container_width=True
+            )
 
             st.markdown("### 🔍 Summary")
             st.metric("Total Students", len(df))
