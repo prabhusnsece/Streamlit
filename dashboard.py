@@ -3,6 +3,7 @@ from supabase import create_client
 import pandas as pd
 from datetime import datetime
 import time
+import pytz
 
 # --- Supabase connection ---
 url = "https://dtzfdekgoskdyhdpqojw.supabase.co"
@@ -12,22 +13,33 @@ supabase = create_client(url, key)
 st.set_page_config(page_title="RFID Student Tracker", layout="wide")
 st.title("🎓 RFID Student Tracking Dashboard")
 
-# --- Auto refresh every few seconds ---
+# --- Sidebar ---
 refresh_rate = st.sidebar.slider("Refresh rate (seconds)", 5, 60, 10)
+st.sidebar.info("Data auto-refreshes every few seconds.")
 
+# --- Placeholder for live updates ---
 placeholder = st.empty()
+ist = pytz.timezone("Asia/Kolkata")
 
 while True:
     with placeholder.container():
-        data = supabase.table("student").select("*").execute().data
+        response = supabase.table("student").select("*").execute()
+        data = response.data
+
         if not data:
             st.warning("No student data available yet.")
         else:
             df = pd.DataFrame(data)
-            df["last_seen"] = pd.to_datetime(df["last_seen"])
-            st.dataframe(df.sort_values("last_seen", ascending=False), use_container_width=True)
+            if "last_seen" in df.columns:
+                df["last_seen"] = pd.to_datetime(df["last_seen"], errors="coerce")
+                df["last_seen"] = df["last_seen"].dt.tz_convert(ist)
+                df["last_seen_str"] = df["last_seen"].dt.strftime("%Y-%m-%d %H:%M:%S %Z")
 
-            # Analytics summary
+            st.subheader("📋 Student Log (Latest First)")
+            st.dataframe(df.sort_values("last_seen", ascending=False)[["id", "name", "rfid", "location", "last_seen_str"]],
+                         use_container_width=True)
+
+            st.markdown("### 🔍 Summary")
             st.metric("Total Students", len(df))
             active = df[df["location"] != "Not detected yet"]
             st.metric("Active Students Detected", len(active))
