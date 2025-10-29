@@ -5,59 +5,76 @@ import pytz
 import time
 
 # ------------------------------------
-# 🔒 PAGE SETUP
+# 🧭 PAGE CONFIG
 # ------------------------------------
 st.set_page_config(page_title="RFID Dashboard", page_icon="🎓", layout="wide")
 
 # ------------------------------------
-# 🔒 LOGIN AUTHENTICATION
+# 🔐 LOGIN SYSTEM
 # ------------------------------------
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
 if not st.session_state.logged_in:
     st.title("🔒 Login Required")
-    user = st.text_input("Username")
-    pwd = st.text_input("Password", type="password")
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
 
     if st.button("Login"):
         if (
-            user == st.secrets["auth"]["username"]
-            and pwd == st.secrets["auth"]["password"]
+            username == st.secrets["auth"]["username"]
+            and password == st.secrets["auth"]["password"]
         ):
             st.session_state.logged_in = True
-            st.success("✅ Login successful! Please wait...")
-            st.query_params["refresh"] = "1"  # new method replacing experimental_set_query_params
+            st.success("✅ Login successful! Redirecting...")
+            st.query_params["refresh"] = "1"
             time.sleep(1)
             st.rerun()
         else:
-            st.error("Invalid username or password")
+            st.error("❌ Invalid username or password")
     st.stop()
 
 # ------------------------------------
-# ✅ CONNECT TO SUPABASE
+# 🔌 CONNECT TO SUPABASE
 # ------------------------------------
 url = st.secrets["supabase"]["url"]
 key = st.secrets["supabase"]["anon_key"]
 supabase: Client = create_client(url, key)
 
+# ------------------------------------
+# 🎓 DASHBOARD HEADER
+# ------------------------------------
 st.title("🎓 RFID Student Tracking Dashboard")
 st.caption("IoT & Edge AI Innovation Lab — Real-time RFID Tracking (India Standard Time)")
 
+# Logout button
+if st.button("🚪 Logout"):
+    st.session_state.logged_in = False
+    st.experimental_rerun()
+
+# Auto-refresh every 10 seconds
+st_autorefresh = st.experimental_data_editor  # alias
+st_autorefresh_interval = 10
+st_autorefresh_label = f"Auto-refreshing every {st_autorefresh_interval} seconds..."
+st.info(st_autorefresh_label)
+st_autorefresh = st.experimental_rerun  # ensure live refresh below
+
+time.sleep(st_autorefresh_interval)
+
 # ------------------------------------
-# 🕒 INDIA TIMEZONE
+# 🕒 TIMEZONE SETUP
 # ------------------------------------
 ist = pytz.timezone("Asia/Kolkata")
 
 # ------------------------------------
-# 📥 FETCH STUDENT DATA
+# 📥 FETCH DATA FROM SUPABASE
 # ------------------------------------
 try:
     data = supabase.table("student").select("*").execute()
     students = data.data
 
     if not students:
-        st.warning("No student data found in Supabase yet.")
+        st.warning("⚠️ No student data found in Supabase yet.")
     else:
         df = pd.DataFrame(students)
 
@@ -66,10 +83,9 @@ try:
             df["last_seen"] = df["last_seen"].dt.tz_convert(ist)
             df["last_seen"] = df["last_seen"].dt.strftime("%Y-%m-%d %H:%M:%S")
 
-        # Sort by recent time
+        # Sort by most recent scans
         df = df.sort_values(by="last_seen", ascending=False)
 
-        # Display
         st.dataframe(
             df[["id", "name", "rfid", "location", "last_seen"]],
             use_container_width=True,
@@ -82,7 +98,7 @@ except Exception as e:
     st.error(f"Error fetching data: {e}")
 
 # ------------------------------------
-# 📅 FOOTER
+# ⚙️ FOOTER
 # ------------------------------------
 st.markdown("---")
 st.markdown(
