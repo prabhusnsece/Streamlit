@@ -10,7 +10,6 @@ import time
 # ------------------------------------------------
 SUPABASE_URL = st.secrets["supabase"]["url"]
 SUPABASE_KEY = st.secrets["supabase"]["anon_key"]
-
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # ------------------------------------------------
@@ -29,6 +28,7 @@ if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
 if not st.session_state.logged_in:
+    st.image("https://www.snsgroups.com/assets/sns%20section-DmAMs1xk.png", width=200)  # replace with your logo path or URL
     st.title("🔒 Login Required")
     username = st.text_input("Username")
     password = st.text_input("Password", type="password")
@@ -47,10 +47,11 @@ if not st.session_state.logged_in:
     st.stop()
 
 # ------------------------------------------------
-# 4️⃣ Title + Logout
+# 4️⃣ Header & Logout
 # ------------------------------------------------
-col1, col2 = st.columns([6, 1])
+col1, col2 = st.columns([7, 1])
 with col1:
+    st.image("https://www.snsgroups.com/assets/sns%20section-DmAMs1xk.png", width=150)  # lab logo
     st.title("🎓 RFID Student Tracking Dashboard")
     st.caption("IoT & Edge AI Innovation Lab — Real-time RFID Tracking (India Standard Time)")
 with col2:
@@ -58,8 +59,13 @@ with col2:
         st.session_state.logged_in = False
         st.rerun()
 
+# Add a hero/banner image
+st.image("https://sppedtrackgps.in/wp-content/uploads/2022/03/RFID-Student-Attendance-System-Banner.png.webp", use_column_width=True)
+
+st.markdown("---")
+
 # ------------------------------------------------
-# 5️⃣ Fetch data from Supabase
+# 5️⃣ Fetch Data from Supabase
 # ------------------------------------------------
 try:
     response = supabase.table("student").select("*").execute()
@@ -87,8 +93,9 @@ if "last_seen" in df.columns:
     df["last_seen"] = df["last_seen"].dt.strftime("%Y-%m-%d %H:%M:%S")
 
 # ------------------------------------------------
-# 8️⃣ Display Data
+# 8️⃣ Show Dashboard Table
 # ------------------------------------------------
+st.subheader("📋 Registered Student Activity")
 st.dataframe(
     df[["id", "name", "rfid", "location", "last_seen"]],
     use_container_width=True,
@@ -96,8 +103,23 @@ st.dataframe(
 )
 
 # ------------------------------------------------
-# 9️⃣ Auto Refresh every 10 seconds
+# 9️⃣ Statistics Section
 # ------------------------------------------------
-st.caption("🔄 Auto-refresh enabled (every 10 seconds)")
+st.markdown("### 📊 Summary Insights")
+
+col1, col2, col3 = st.columns(3)
+with col1:
+    st.metric("👩‍🎓 Total Students", len(df))
+with col2:
+    st.metric("🏫 Active Locations", df["location"].nunique())
+with col3:
+    st.metric("⏰ Last Update", datetime.now(pytz.timezone("Asia/Kolkata")).strftime("%H:%M:%S"))
+
+st.markdown("---")
+
+# ------------------------------------------------
+# 🔁 Auto Refresh every 10 seconds
+# ------------------------------------------------
+st.caption("🔄 Auto-refresh every 10 seconds to reflect real-time tag reads.")
 time.sleep(10)
 st.rerun()
