@@ -3,6 +3,7 @@ import pandas as pd
 from supabase import create_client, Client
 from datetime import datetime
 import pytz
+import time
 
 # ------------------------------------------------
 # 1️⃣ Load secrets (Supabase + Login)
@@ -22,7 +23,7 @@ st.set_page_config(
 )
 
 # ------------------------------------------------
-# 3️⃣ Authentication
+# 3️⃣ Authentication (Persistent across refreshes)
 # ------------------------------------------------
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
@@ -38,15 +39,12 @@ if not st.session_state.logged_in:
             and password == st.secrets["auth"]["password"]
         ):
             st.session_state.logged_in = True
-            st.success("✅ Login successful! Redirecting...")
-            st.query_params["logged_in"] = "true"
-            st.stop()
+            st.success("✅ Login successful! Loading dashboard...")
+            time.sleep(1)
+            st.rerun()
         else:
             st.error("❌ Invalid username or password")
     st.stop()
-else:
-    if "logged_in" in st.query_params:
-        del st.query_params["logged_in"]
 
 # ------------------------------------------------
 # 4️⃣ Title
@@ -55,9 +53,13 @@ st.title("🎓 RFID Student Tracking Dashboard")
 st.caption("IoT & Edge AI Innovation Lab — Real-time RFID Tracking (India Standard Time)")
 
 # ------------------------------------------------
-# 5️⃣ Auto Refresh
+# 5️⃣ Auto Refresh without logout
 # ------------------------------------------------
-st.markdown("<meta http-equiv='refresh' content='10'>", unsafe_allow_html=True)
+refresh_rate = 10  # seconds
+st_autorefresh = st.empty()
+st_autorefresh.info(f"🔄 Auto-refresh every {refresh_rate} seconds.")
+time.sleep(refresh_rate)
+st.rerun()
 
 # ------------------------------------------------
 # 6️⃣ Fetch data from Supabase
@@ -95,5 +97,3 @@ st.dataframe(
     use_container_width=True,
     hide_index=True
 )
-
-st.success("✅ Data updated automatically every 10 seconds.")
