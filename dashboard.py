@@ -60,7 +60,7 @@ with col2:
         st.rerun()
 
 # Add a hero/banner image
-st.image("https://sppedtrackgps.in/wp-content/uploads/2022/03/RFID-Student-Attendance-System-Banner.png.webp", use_column_width=True)
+st.image("https://sppedtrackgps.in/wp-content/uploads/2022/03/RFID-Student-Attendance-System-Banner.png.webp", use_container_width=True)
 
 st.markdown("---")
 
@@ -123,3 +123,4 @@ st.markdown("---")
 st.caption("🔄 Auto-refresh every 10 seconds to reflect real-time tag reads.")
 time.sleep(10)
 st.rerun()
+
