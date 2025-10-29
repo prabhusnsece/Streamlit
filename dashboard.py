@@ -2,62 +2,70 @@ import streamlit as st
 from supabase import create_client
 import pandas as pd
 from datetime import datetime
-import time
 import pytz
 
-# --- Supabase connection ---
-url = "https://dtzfdekgoskdyhdpqojw.supabase.co"
-key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0emZkZWtnb3NrZHloZHBxb2p3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE2Mzg2NDUsImV4cCI6MjA3NzIxNDY0NX0.KYdFwdezWFeR5KyX2v3KdrVJgAGl8nxqAmXRKOqa22c"
-supabase = create_client(url, key)
+# ---------------------------------
+# Load secrets for authentication
+# ---------------------------------
+AUTH_USER = st.secrets["auth"]["username"]
+AUTH_PASS = st.secrets["auth"]["password"]
 
-st.set_page_config(page_title="RFID Student Tracker", layout="wide")
-st.title("🎓 RFID Student Tracking Dashboard")
+# ---------------------------------
+# Login Page
+# ---------------------------------
+if "authenticated" not in st.session_state:
+    st.session_state["authenticated"] = False
 
-# --- Sidebar ---
-refresh_rate = st.sidebar.slider("Refresh rate (seconds)", 5, 60, 10)
-st.sidebar.info("Data auto-refreshes every few seconds.")
+def login_screen():
+    st.title("🔐 RFID Dashboard Login")
+    st.write("IoT & Edge AI Innovation Lab")
 
-# --- Timezone setup ---
-ist = pytz.timezone("Asia/Kolkata")
-utc = pytz.utc
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
 
-# --- Placeholder for live updates ---
-placeholder = st.empty()
-
-while True:
-    with placeholder.container():
-        response = supabase.table("student").select("*").execute()
-        data = response.data
-
-        if not data:
-            st.warning("No student data available yet.")
+    if st.button("Login"):
+        if username == AUTH_USER and password == AUTH_PASS:
+            st.session_state["authenticated"] = True
+            st.success("✅ Login successful!")
+            st.rerun()
         else:
-            df = pd.DataFrame(data)
+            st.error("❌ Invalid username or password")
 
-            # Handle time conversion safely
-            if "last_seen" in df.columns:
-                df["last_seen"] = pd.to_datetime(df["last_seen"], errors="coerce")
+if not st.session_state["authenticated"]:
+    login_screen()
+    st.stop()  # Stop execution until login succeeds
 
-                # First localize to UTC (if no timezone info)
-                df["last_seen"] = df["last_seen"].dt.tz_localize("UTC", nonexistent="NaT", ambiguous="NaT")
-                # Then convert to IST
-                df["last_seen"] = df["last_seen"].dt.tz_convert(ist)
+# ---------------------------------
+# Continue to main dashboard after login
+# ---------------------------------
+st.set_page_config(page_title="RFID Student Tracking Dashboard", layout="wide")
 
-                # Format readable IST string
-                df["last_seen_str"] = df["last_seen"].dt.strftime("%Y-%m-%d %H:%M:%S %Z")
+# Supabase connection
+supabase = create_client(st.secrets["supabase"]["url"], st.secrets["supabase"]["anon_key"])
 
-            st.subheader("📋 Student Log (Latest First)")
-            st.dataframe(
-                df.sort_values("last_seen", ascending=False)[
-                    ["id", "name", "rfid", "location", "last_seen_str"]
-                ],
-                use_container_width=True
-            )
+st.title("🎓 RFID Student Tracking Dashboard")
+st.caption("IoT & Edge AI Innovation Lab — Real-time RFID Tracking (India Standard Time)")
 
-            st.markdown("### 🔍 Summary")
-            st.metric("Total Students", len(df))
-            active = df[df["location"] != "Not detected yet"]
-            st.metric("Active Students Detected", len(active))
+# Fetch data
+response = supabase.table("students").select("*").execute()
+df = pd.DataFrame(response.data)
 
-    time.sleep(refresh_rate)
+if not df.empty:
+    df["last_seen"] = pd.to_datetime(df["last_seen"])
+    # Convert UTC → IST
+    ist = pytz.timezone("Asia/Kolkata")
+    df["last_seen"] = df["last_seen"].dt.tz_localize("UTC").dt.tz_convert(ist)
+    df["last_seen"] = df["last_seen"].dt.strftime("%Y-%m-%d %H:%M:%S")
+
+    st.dataframe(
+        df[["id", "name", "rfid", "location", "last_seen"]],
+        use_container_width=True,
+        hide_index=True
+    )
+else:
+    st.info("No student data found in Supabase yet.")
+
+# Logout button
+if st.button("Logout"):
+    st.session_state["authenticated"] = False
     st.rerun()
