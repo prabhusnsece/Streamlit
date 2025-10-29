@@ -47,22 +47,19 @@ if not st.session_state.logged_in:
     st.stop()
 
 # ------------------------------------------------
-# 4️⃣ Title
+# 4️⃣ Title + Logout
 # ------------------------------------------------
-st.title("🎓 RFID Student Tracking Dashboard")
-st.caption("IoT & Edge AI Innovation Lab — Real-time RFID Tracking (India Standard Time)")
+col1, col2 = st.columns([6, 1])
+with col1:
+    st.title("🎓 RFID Student Tracking Dashboard")
+    st.caption("IoT & Edge AI Innovation Lab — Real-time RFID Tracking (India Standard Time)")
+with col2:
+    if st.button("🚪 Logout"):
+        st.session_state.logged_in = False
+        st.rerun()
 
 # ------------------------------------------------
-# 5️⃣ Auto Refresh without logout
-# ------------------------------------------------
-refresh_rate = 10  # seconds
-st_autorefresh = st.empty()
-st_autorefresh.info(f"🔄 Auto-refresh every {refresh_rate} seconds.")
-time.sleep(refresh_rate)
-st.rerun()
-
-# ------------------------------------------------
-# 6️⃣ Fetch data from Supabase
+# 5️⃣ Fetch data from Supabase
 # ------------------------------------------------
 try:
     response = supabase.table("student").select("*").execute()
@@ -76,12 +73,12 @@ if not data:
     st.stop()
 
 # ------------------------------------------------
-# 7️⃣ Convert to DataFrame
+# 6️⃣ Convert to DataFrame
 # ------------------------------------------------
 df = pd.DataFrame(data)
 
 # ------------------------------------------------
-# 8️⃣ Convert UTC → IST
+# 7️⃣ Convert UTC → IST
 # ------------------------------------------------
 if "last_seen" in df.columns:
     ist = pytz.timezone("Asia/Kolkata")
@@ -90,10 +87,17 @@ if "last_seen" in df.columns:
     df["last_seen"] = df["last_seen"].dt.strftime("%Y-%m-%d %H:%M:%S")
 
 # ------------------------------------------------
-# 9️⃣ Display Data
+# 8️⃣ Display Data
 # ------------------------------------------------
 st.dataframe(
     df[["id", "name", "rfid", "location", "last_seen"]],
     use_container_width=True,
     hide_index=True
 )
+
+# ------------------------------------------------
+# 9️⃣ Auto Refresh every 10 seconds
+# ------------------------------------------------
+st.caption("🔄 Auto-refresh enabled (every 10 seconds)")
+time.sleep(10)
+st.rerun()
