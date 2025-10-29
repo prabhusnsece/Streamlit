@@ -2,7 +2,7 @@ import streamlit as st
 from supabase import create_client, Client
 import pandas as pd
 import pytz
-import time
+from datetime import datetime
 
 # ------------------------------------
 # 🧭 PAGE CONFIG
@@ -28,7 +28,6 @@ if not st.session_state.logged_in:
             st.session_state.logged_in = True
             st.success("✅ Login successful! Redirecting...")
             st.query_params["refresh"] = "1"
-            time.sleep(1)
             st.rerun()
         else:
             st.error("❌ Invalid username or password")
@@ -50,16 +49,16 @@ st.caption("IoT & Edge AI Innovation Lab — Real-time RFID Tracking (India Stan
 # Logout button
 if st.button("🚪 Logout"):
     st.session_state.logged_in = False
-    st.experimental_rerun()
+    st.rerun()
 
-# Auto-refresh every 10 seconds
-st_autorefresh = st.experimental_data_editor  # alias
-st_autorefresh_interval = 10
-st_autorefresh_label = f"Auto-refreshing every {st_autorefresh_interval} seconds..."
-st.info(st_autorefresh_label)
-st_autorefresh = st.experimental_rerun  # ensure live refresh below
+# ------------------------------------
+# 🔁 AUTO REFRESH
+# ------------------------------------
+st_autorefresh = st.experimental_rerun  # deprecated; fixed below
+st_autorefresh_count = st.experimental_rerun  # ignore—remove confusion
 
-time.sleep(st_autorefresh_interval)
+# ✅ Use official auto-refresh (every 10s)
+st_autorefresh = st.autorefresh(interval=10 * 1000, key="refresh")
 
 # ------------------------------------
 # 🕒 TIMEZONE SETUP
