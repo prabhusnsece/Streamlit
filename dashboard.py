@@ -2,6 +2,7 @@ import streamlit as st
 from supabase import create_client, Client
 import pandas as pd
 import pytz
+import time
 
 # ------------------------------------
 # 🔒 PAGE SETUP
@@ -26,7 +27,9 @@ if not st.session_state.logged_in:
         ):
             st.session_state.logged_in = True
             st.success("✅ Login successful! Please wait...")
-            st.experimental_set_query_params(refresh="1")  # safe page refresh
+            st.query_params["refresh"] = "1"  # new method replacing experimental_set_query_params
+            time.sleep(1)
+            st.rerun()
         else:
             st.error("Invalid username or password")
     st.stop()
@@ -45,13 +48,6 @@ st.caption("IoT & Edge AI Innovation Lab — Real-time RFID Tracking (India Stan
 # 🕒 INDIA TIMEZONE
 # ------------------------------------
 ist = pytz.timezone("Asia/Kolkata")
-
-# ------------------------------------
-# 🔄 AUTO REFRESH
-# ------------------------------------
-st_autorefresh = st.empty()
-st_autorefresh.info("🔁 Auto-refreshes every 10 seconds")
-st_autorefresh = st.experimental_data_editor
 
 # ------------------------------------
 # 📥 FETCH STUDENT DATA
