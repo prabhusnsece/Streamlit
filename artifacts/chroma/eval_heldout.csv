@@ -1,0 +1,16 @@
+question,paper_id,page
+Why does Cadformer use fine‑grained cross‑modal alignment and a decoding transformer for referring remote sensing image segmentation?,2610_26872v1,12
+How does sequential CNN distillation improve the mean average precision (mAP) of AD-Mamba compared to direct CNN distillation?,2610_27713v1,10
+How does the joint hierarchical Bayesian model used in the study propagate uncertainty from missing information to estimate the probabilities of serum Brix quality classes given colostrum Brix?,2610_28042v1,2
+How does the SAP‑DPF framework use an uncertainty‑gated late‑fusion module to adaptively combine the separately estimated structural and vascular ageing signals from OCT and OCTA images?,2609_38264v2,1
+How does using a support vector machine with an RBF kernel and class weights inversely proportional to class frequencies help address label imbalance in the binary depression classification task described?,2610_26890v1,3
+"How does the cosine similarity of multi‑coil k‑space magnitudes across cardiac phases, as defined by c‑sim(|y|, r) = ⟨|y|, r⟩ / (∥|y|∥ ∥r∥), relate to the normalized magnitude estimation error (NMSE) when evaluating steady‑state dynamic MRI data from the OCMR and CMRxRecon2025 datasets?",2608_18036v2,3
+"How does the Point2Acoustic training framework use PointNet or PointNet++ encoders to map surface-sampled 3D scenes to six-band RT60 and RDR estimates, and why are global max pooling and shared MLP layers employed in the architecture?",2610_27023v1,3
+"How does the VISTA method achieve lower paired mean aligned block‑NMSE compared to the CMA‑plus separation baseline in the blind benchmark, and why is this improvement concentrated in large‑error trials?",2610_27358v1,2
+How does the longitudinal coupling β = |Ez|/|E⊥| arise from the horn’s radial polarization and torus geometry in the toroidal-OAM hybrid beam?,2610_26921v1,3
+How does the RMSampler sampling score \(a_k\) in equation (15) balance the post‑measurement reconstruction error \(R^+_x(k)\) and the expected emitter‑location error \(R^+_\tau(k)\) to achieve a clipped normalized one‑step joint estimation error minimization?,2610_27464v1,5
+"How does the conditional reference introduced in the PSO framework separate candidate‑set reduction from within‑block voice contribution, and why does this separation matter for evaluating geographic side information in voice‑privacy risk?",2610_26884v1,6
+"How does the proposed joint 1‑bit RIS element activation and fluid‑antenna port selection achieve a lower outage probability compared to fixed‑axis quantization, no FAS selection, and magnitude‑first activation with exact binary phases at an average SNR of 4 dB?",2610_27291v1,4
+How does the masked convolution in the context model of the typical LIC architecture ensure that only previously decoded pixels are used during entropy coding?,2610_27037v1,2
+How does the PW-Pruning method use phase-aware expert selection to reduce the memory footprint of mixture-of-experts models while maintaining speech-centric performance?,2610_26891v1,1
+How does applying Z‑score normalization to the fundamental frequency values help eliminate absolute pitch differences between speakers in the ShlokaDhara corpus?,2610_26929v1,7

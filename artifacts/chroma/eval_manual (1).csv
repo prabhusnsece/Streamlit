@@ -1,0 +1,21 @@
+question,paper_id,page
+What limitations of existing label-free FET cytokine sensors motivate the proposed CMOS ISFET array and FlexDym platform?,2610_27432v1,1
+Why does the study select IL-6 and IL-10 as the minimum meaningful cytokine panel for inflammation monitoring?,2610_27432v1,1
+"How are the four wells of the FlexDym overlay functionalized, and what is the purpose of each well?",2610_27432v1,1
+How does subtracting the chemistry-only reference-well response help reduce common-mode disturbances in the ISFET cytokine sensor?,2610_27432v1,1
+What advantages does the paper attribute to FlexDym (SEBS) over PDMS for microfluidic packaging in quantitative protein sensing?,2610_27432v1,2
+How does the 128×128 ISFET array architecture support statistical averaging compared with earlier FET cytokine sensors?,2610_27432v1,2
+What role does the current conveyor play in the readout of the CMOS ISFET pixel array?,2610_27432v1,3
+"How many pixels are assigned to each FlexDym well, and how does the number of pixels support noise averaging?",2610_27432v1,4
+Why does the cytokine dose-response protocol use 0.01× PBS rather than the original higher-concentration PBS?,2610_27432v1,5
+How does the study define the limit of detection for IL-6 and IL-10 using the measured non-specific detection floor?,2610_27432v1,5
+What are the main steps in the Si3N4 surface functionalization process used to attach capture antibodies to the ISFET gate?,2610_27432v1,5
+What do the measured dose-response results indicate about the limits of detection and apparent EC50 values for IL-6 and IL-10?,2610_27432v1,6
+Why does the paper identify transconductance variation as the dominant source of device-to-device measurement variation?,2610_27432v1,6
+How does per-device transconductance calibration reduce the reported device-to-device measurement variation?,2610_27432v1,6
+"What evidence does the four-well multiplex experiment provide about target response, reference response, and cross-specificity?",2610_27432v1,6
+"How was fluidic isolation between adjacent FlexDym wells evaluated, and what did the observed threshold-voltage maps indicate?",2610_27432v1,6
+"Which important specificity tests remain incomplete according to the paper, and why do these gaps matter?",2610_27432v1,6
+Why might the IL-10 sensor response be highly sensitive at low concentrations but less useful for quantification across the upper concentration range?,2610_27432v1,6
+What limitation does the use of diluted buffer create for translating the proposed sensor to measurements in undiluted serum?,2610_27432v1,6
+"What are the main contributions of the proposed platform, and what future improvements does the paper identify for broader multiplex cytokine sensing?",2610_27432v1,7

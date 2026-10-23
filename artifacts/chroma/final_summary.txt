@@ -1,0 +1,7 @@
+Final system
+- Chunking     : B_rec_384_64 (1214 chunks)
+- Embedding    : bge-m3  (commercial comparison: skipped: no OPENAI_API_KEY)
+- Vector DB    : ChromaDB (cosine), collection b_rec_384_64_bge_m3
+- Retriever    : bm25  | dev MRR 0.890 | held-out MRR 0.922
+- LLM          : openai/gpt-oss-20b via Groq API | judge: openai/gpt-oss-120b (independent judge; generator: openai/gpt-oss-20b)
+- Held-out eval: {"n_in_scope / n_out_of_scope": "15 / 4", "retrieval: gold page in top-3": 1.0, "answers with valid [n] citation": 0.643, "mean lexical support": 0.963, "abstained on in-scope (lower is better)": 0.067, "correctly abstained on out-of-scope": 1.0, "judge faithfulness (in-scope, 1-5)": 4.8, "judge relevance (in-scope, 1-5)": 5.0, "judge hallucination rate (in-scope)": 0.133}

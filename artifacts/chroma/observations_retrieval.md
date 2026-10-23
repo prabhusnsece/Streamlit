@@ -1,0 +1,5 @@
+**Selected retriever: `bm25`** (MRR 0.890, Hit@3 1.00, Prec@3 0.66, 7 ms/query).
+- vs. dense baseline: MRR +0.022, latency x0. Paired bootstrap 95% interval of the per-question MRR difference: [-0.044, +0.088] -> NOT distinguishable from dense retrieval with this dev set: treat the choice as a cost/benefit judgement and say so in the viva.
+- Plain hybrid (RRF) scored MRR 0.838 vs dense 0.868: fusing BM25 only helps when the lexical ranking is competitive; if it is not, RRF can dilute a strong dense ranking. The cross-encoder is what re-sorts the fused pool.
+- Multi-query adds an LLM call per question (see latency); on a small local model the paraphrases are often near-duplicates, so its recall benefit is small relative to its cost.
+- Precision@3 is bounded above by design: only chunks within +-1 page of the gold page count as relevant.
